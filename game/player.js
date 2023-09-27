@@ -2,14 +2,20 @@ var Player = function(name, color, position, direction) {
 
     this.name = name;
     this.position = position;
-    this.life = 3;
+    this.life = 100;
     this.bullets = new Array();
     this.direction = direction;
     this.speed = 0;
 
-    this.material = new THREE.MeshLambertMaterial({
-        color: color,
+    if (name == "enemy") {
+        this.material = new THREE.MeshLambertMaterial({
+            color: color
+        })
+    } else {
+        this.material = new THREE.MeshLambertMaterial({
+            color: color,
         });
+    }
 
     var singleGeometry = new THREE.Geometry();
 
@@ -21,6 +27,10 @@ var Player = function(name, color, position, direction) {
 };
 
 Player.prototype.dead = function () {
+    player1.life -= 1;
+    if (player1.life > 0) {
+        return;
+    }
     this.graphic.position.z = this.graphic.position.z-0.1;
         //Nettoyage de la div container
         $("#container").html("");
@@ -61,9 +71,23 @@ Player.prototype.turnLeft = function (angle) {
 };
 
 Player.prototype.move = function () {
+    posX =  this.speed * Math.cos(this.direction) + this.position.x;
+    posY =   this.speed * Math.sin(this.direction) + this.position.y;
+    if (posX < -300.) {
+        posX = -300;
+    }
+    if (posX > 300.) {
+        posX = 300;
+    }
+    if (posY < -200.) {
+        posY = -200;
+    }
+    if (posY > 200.) {
+        posY = 200;
+    }
     var moveTo = new THREE.Vector3(
-        this.speed * Math.cos(this.direction) + this.position.x,
-        this.speed * Math.sin(this.direction) + this.position.y,
+        posX,
+       posY,
         this.graphic.position.z
     );
 
